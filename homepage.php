@@ -9,6 +9,8 @@
 <script>
 var choosenouterdiv;
 var correctsequence = new Array();
+var correctsequencewithindex = new Array();
+var changedsequencewithindex = new Array();
 var jumbledsequence = new Array();
 var changedsequence = new Array();
 var lightsequence = new Array('111','121','131','211','221','231','311','321','331','411','421','431','511','521','531');
@@ -22,11 +24,15 @@ var hints = new Array('Monument' ,'Monument' ,'Monument' ,'Monument' ,'Monument'
 				console.log('update: '+ui.item.index())
 				var position = ui.item.index();				
 				var k =0 ;
+				changedsequence = new Array();
 				$("#"+choosenouterdiv +" > div").map(function() 
 				{
-	  				changedsequence[k ++] = $(this).attr("id");
+					if(typeof $(this).attr("id") == "string")
+					{
+						changedsequence[k ++] = $(this).attr("id");
+					}
 				});
-				
+				changedsequencewithindex[choosenouterdiv] = changedsequence;
 				if(changedsequence[position].length == 3)
 				{
 					if(position.toString.length == 2)
@@ -194,6 +200,7 @@ var hints = new Array('Monument' ,'Monument' ,'Monument' ,'Monument' ,'Monument'
 		  				
 				});
 				sortarray(correctsequence);
+				correctsequencewithindex[choosenouterdiv] =  correctsequence;
 				console.log('start: ' + ui.item.index())
         		}
 		});
@@ -289,6 +296,37 @@ function sortarray(arr)
 function showhint(id)
 {
 	$("#hint" + id[6]).html('<p>'+ hints[id[6] - 1] + '</p>');
+}
+
+function findscore()
+{
+var score =0;
+	for(var i = 1 ; i < correctsequencewithindex.length ; i ++)
+	{
+		//alert(correctsequencewithindex[i]);
+		if(correctsequencewithindex[i] != undefined)
+		{
+			for(var j = 0 ; j < correctsequencewithindex[i].length  ; j ++)
+			{
+				if(correctsequencewithindex[i][j][2] == changedsequencewithindex[i][j][2])
+				{
+					score ++;
+					score ++;
+				}
+				//alert(correctsequencewithindex[i][j]);
+			}
+			//alert(changedsequencewithindex[i]);
+		}
+	}
+	for(var i = 0 ; i < lightsequence.length ; i ++)
+	{
+		if(lightsequence[i][2] == "0")
+		{
+			score -= 3; 
+		}
+	}
+	
+	alert(score);
 }
 </script>
 <style>
@@ -426,6 +464,16 @@ function showhint(id)
 	border:1px solid green;
 	float:left;
 }
+#submitscore
+{
+	border:1px solid green;
+	width:230px;
+	margin-left:865px;
+	margin-top:-255px;
+	float:left;
+	height:250px;
+	text-align:center;
+}
 </style>
 <?php
 $arr = array("TAJ MAHAL" , "LOTUS TEMPLE" , "INDIA GATE" , "AKSHARDHAM" , "LAL KILA");
@@ -455,6 +503,9 @@ echo "<div id='hints'>";
 	echo "<div id='hint3'><input type='button' id='hintof3' value='Show Hint' onclick='showhint(this.id)'/></div>";
 	echo "<div id='hint4'><input type='button' id='hintof4' value='Show Hint' onclick='showhint(this.id)'/></div>";
 	echo "<div id='hint5'><input type='button' id='hintof5' value='Show Hint' onclick='showhint(this.id)'/></div>";
+echo "</div>";
+echo "<div id='submitscore'>";
+echo "<a href='javascript:void(0)' onclick='findscore()'><img src='images/submit.png' height=60 width=150 style='margin-top:80px;'/></a>";
 echo "</div>";
 ?>
 <script>
